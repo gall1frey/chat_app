@@ -1,0 +1,4 @@
+*.out
+./server/server3.c
+./server/server2.c
+./client/client2.c
