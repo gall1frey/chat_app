@@ -15,7 +15,6 @@ volatile sig_atomic_t flag = 0;
 struct sockaddr_in serv; //This is our main socket variable.
 int fd; //This is the socket file descriptor that will be used to identify the socket
 int conn; //This is the connection file descriptor that will be used to distinguish client connections.
-//char message[LEN-32] = ""; //This array will store the messages that are sent by the server
 char name[32]; //This array will store the client's name
 
 void str_overwrite_stdout() {
@@ -94,10 +93,10 @@ int main(int argc, char const *argv[]) {
   	}
     char buf[32] = {};
     sprintf(buf,"NM>%s",name);
-    printf("[DEBUG]: Sending: %s\n",buf);
+    //printf("[DEBUG]: Sending: %s\n",buf);
     send(fd, buf, 32, 0);
     int receive = recv(fd, buf, 3, 0);
-    printf("[DEBUG]: Received: %s\n",buf);
+    //printf("[DEBUG]: Received: %s\n",buf);
     if (receive > 0 && !strcmp(buf,"OK")){
       break;
     }

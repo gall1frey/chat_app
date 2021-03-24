@@ -13,6 +13,10 @@
 #define MAX_CLIENTS 5
 #define LEN 2080
 
+
+char *colours[8] = {"\033[0;37m", "\033[0;35m", "\033[0;33m", "\033[0;32m", "\033[0;34m", "\033[0;31m", "\033[0;36m"};
+enum COLOR{WHITE, PURPLE, YELLOW, GREEN, BLUE, RED, CYAN};
+
 static _Atomic unsigned int cli_count = 0;
 static int uid = 10;
 
@@ -21,7 +25,7 @@ typedef struct{
 	int sockfd;
 	int uid;
 	char name[32];
-  char color[32];
+  enum COLOR color;
 } CLIENT;
 
 CLIENT *clients[MAX_CLIENTS];
@@ -47,6 +51,7 @@ void queue_add(CLIENT *cl){
 	for(int i=0; i < MAX_CLIENTS; ++i){
 		if(!clients[i]){
 			clients[i] = cl;
+			clients[i]->color = (i%6)+1;
 			break;
 		}
 	}
@@ -95,8 +100,8 @@ void *handle_client(void *c_id){
 			cli->name[i] = name_msg[i+3];
 			i++;
 		}
-		sprintf(message_buf, "%s has joined\n", cli->name);
-		printf("%s\n", message_buf);
+		sprintf(message_buf, "%s%s has joined%s\n",colours[cli->color], cli->name,colours[0]);
+		printf("%s %s\n", message_buf,colours[0]);
 		send(cli->sockfd,"OK",3,0);
 		send_msg(message_buf,cli->uid);
 	} else {
@@ -109,13 +114,15 @@ void *handle_client(void *c_id){
 		int receive = recv(cli->sockfd, message_buf, LEN, 0);
 		if(receive > 0){
 			if( strlen(message_buf) > 0 ){
-
+				char tmp[2080] = {};
+				sprintf(tmp,"%s%s%s",colours[cli->color],message_buf,colours[0]);
+				sprintf(message_buf,"%s",tmp);
 				send_msg(message_buf, cli->uid);
 				str_trim_lf(message_buf, strlen(message_buf));
 				printf("%s -> %s\n",cli->name,message_buf);
 			}
 		} else if (receive == 0 || !strcmp(message_buf, "exit")){
-			sprintf(message_buf, "%s has left.\n", cli->name);
+			sprintf(message_buf, "%s%s has left%s.\n",colours[cli->color],cli->name,colours[0]);
 			printf("%s", message_buf);
 			send_msg(message_buf, cli->uid);
 			leave_flag = 1;
