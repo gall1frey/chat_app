@@ -86,6 +86,20 @@ void send_msg(char *msg, int uid){
 	pthread_mutex_unlock(&clients_mutex);
 }
 
+int name_exists(char *name, int uid){
+	int flag = 0;
+	pthread_mutex_lock(&clients_mutex);
+	for(int i=0; i < cli_count; i++){
+		//printf("[DEBUG]: %s : %s\n", clients[i]->name,name);
+		if(clients[i] && !strcmp(clients[i]->name,name) && clients[i]->uid != uid){
+			flag = 1;
+			break;
+		}
+	}
+	pthread_mutex_unlock(&clients_mutex);
+	return flag;
+}
+
 void *handle_client(void *c_id){
 	char name_msg[32] = {};
 	char message_buf[LEN];
@@ -100,10 +114,14 @@ void *handle_client(void *c_id){
 			cli->name[i] = name_msg[i+3];
 			i++;
 		}
-		sprintf(message_buf, "%s%s has joined%s\n",colours[cli->color], cli->name,colours[0]);
-		printf("%s %s\n", message_buf,colours[0]);
-		send(cli->sockfd,"OK",3,0);
-		send_msg(message_buf,cli->uid);
+		if(!name_exists(cli->name,cli->uid)){
+			sprintf(message_buf, "%s%s has joined%s\n",colours[cli->color], cli->name,colours[0]);
+			printf("%s%s\n", message_buf,colours[0]);
+			send(cli->sockfd,"OK",3,0);
+			send_msg(message_buf,cli->uid);
+		} else {
+			leave_flag = 1;
+		}
 	} else {
 		leave_flag = 1;
 	}

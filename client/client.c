@@ -82,26 +82,24 @@ int main(int argc, char const *argv[]) {
   connect(fd, (struct sockaddr *)&serv, sizeof(serv)); //This connects the client to the server.
 
   //Set name
-  while (1) {
-    printf("Please enter your name: ");
-    fgets(name, 32, stdin);
-    str_trim_lf(name, strlen(name));
-    //Name validation
-    if (strlen(name) > 32 || strlen(name) < 2){
-  		printf("Name must be less than 30 and more than 2 characters.\n");
-  		return EXIT_FAILURE;
-  	}
-    char buf[32] = {};
-    sprintf(buf,"NM>%s",name);
-    //printf("[DEBUG]: Sending: %s\n",buf);
-    send(fd, buf, 32, 0);
-    int receive = recv(fd, buf, 3, 0);
-    //printf("[DEBUG]: Received: %s\n",buf);
-    if (receive > 0 && !strcmp(buf,"OK")){
-      break;
-    }
-    else
-      printf("Name already exists in chatroom. Try again.\n");
+  printf("Please enter your name: ");
+  fgets(name, 32, stdin);
+  str_trim_lf(name, strlen(name));
+  //Name validation
+  if (strlen(name) > 32 || strlen(name) < 2){
+		printf("Name must be less than 30 and more than 2 characters.\n");
+		return EXIT_FAILURE;
+	}
+  char buf[32] = {};
+  sprintf(buf,"NM>%s",name);
+  //printf("[DEBUG]: Sending: %s\n",buf);
+  send(fd, buf, 32, 0);
+  int receive = recv(fd, buf, 3, 0);
+  //printf("[DEBUG]: Received: %s\n",buf);
+  if (!(receive > 0 && !strcmp(buf,"OK"))) {
+    printf("Name already exists in chatroom. Try again.\n");
+    close(fd);
+    return EXIT_FAILURE;
   }
 
   printf("WELCOME TO CHATROOM!\n");
