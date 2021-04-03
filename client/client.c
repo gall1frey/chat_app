@@ -1,13 +1,15 @@
 #include "client.h"
 
-
 int main(int argc, char const *argv[]) {
+  char* IP = (argc >= 3)? argv[1] : "127.0.0.1";
+  int PORT = (argc >= 3)? atoi(argv[2]) : 8096;
+  printf("PORT: %d\n", PORT);
   signal(SIGINT, catch_ctrl_c_and_exit);
 
   fd = socket(AF_INET, SOCK_STREAM, 0);
   serv.sin_family = AF_INET;
-  serv.sin_port = htons(8096);
-  inet_pton(AF_INET, "127.0.0.1", &serv.sin_addr); //This binds the client to localhost
+  serv.sin_port = htons(PORT);
+  inet_pton(AF_INET, IP, &serv.sin_addr); //This binds the client to localhost
   connect(fd, (struct sockaddr *)&serv, sizeof(serv)); //This connects the client to the server.
 
   //Set name

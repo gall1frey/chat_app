@@ -1,8 +1,9 @@
 #include "server.h"
 
 int main(int argc, char const *argv[]) {
-	char *ip = "127.0.0.1";
-	int port = 8096;
+	char *ip = int port = (argc >= 3)? argv[1] : "127.0.0.1";
+	int port = (argc >= 3)? atoi(argv[2]) : 8096;
+	printf("PORT: %d\n", port);
 	int option = 1, listenfd = 1, connfd = 0;
 
 	struct sockaddr_in serv_addr;
@@ -27,7 +28,7 @@ int main(int argc, char const *argv[]) {
     return EXIT_FAILURE;
   }
 
-	//Listen for client connections. Maximum 5 connections will be permitted.
+	//Listen for client connections. Maximum 10 connections will be permitted.
 	if (listen(listenfd, 10) < 0) {
 		perror("ERROR: Socket listening failed");
 		return EXIT_FAILURE;
