@@ -9,14 +9,15 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <regex.h>
 
 #define MAX_CLIENTS 5
 #define LEN 2080
 
-extern char *colours[8];
+extern char *colours[7];
 enum COLOR{WHITE, PURPLE, YELLOW, GREEN, BLUE, RED, CYAN};
 
- static _Atomic unsigned int cli_count = 0;
+ static unsigned int cli_count = 0;
  static int uid = 10;
 
 typedef struct{
@@ -32,7 +33,7 @@ extern pthread_mutex_t clients_mutex;
 
 void str_overwrite_stdout();
 
-void str_trim_lf (char* arr, int length);
+void str_trim_lf (char* arr, size_t length);
 
 void queue_add(CLIENT *cl);
 
@@ -43,3 +44,5 @@ void send_msg(char *msg, int uid);
 int name_exists(char *name, int uid);
 
 void *handle_client(void *c_id);
+
+void handle_args(uint16_t *port, char **ip, int argc, char *argv[]);

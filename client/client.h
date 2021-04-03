@@ -18,7 +18,8 @@ extern int conn; //This is the connection file descriptor that will be used to d
 extern char name[32]; //This array will store the client's name
 
 void str_overwrite_stdout();
-void str_trim_lf (char* arr, int length);
+void str_trim_lf (char* arr, size_t length);
 void catch_ctrl_c_and_exit(int sig);
 void send_func();
 void recv_func();
+void handle_args(uint16_t *port, char **ip, int argc, char *argv[]);
