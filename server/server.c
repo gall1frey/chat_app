@@ -2,7 +2,7 @@
 
 int main(int argc, char const *argv[]) {
 	char *ip = "127.0.0.1";
-	int port = 8096;
+	int port = atoi(argv[1]);
 	int option = 1, listenfd = 1, connfd = 0;
 
 	struct sockaddr_in serv_addr;
