@@ -4,7 +4,7 @@ volatile sig_atomic_t flag = 0;
 struct sockaddr_in serv;
 int fd;
 int conn;
-char name[32];
+char name[NAME_LEN];
 
 void str_overwrite_stdout() {
   printf("%s", "> ");
@@ -28,28 +28,29 @@ void catch_ctrl_c_and_exit( /*@unused@*/ int sig) {
 
 void send_func() {
   char message[LEN] = "";
-	char buffer[LEN + 32] = "";
+	//char buffer[LEN + 32] = "";
   while(1) {
     str_overwrite_stdout();
-    (void)fgets(message, 100, stdin);
+    (void)fgets(message, LEN, stdin);
     str_trim_lf(message,LEN);
     if(!strcmp(message,"exit"))
       break;
     else{
-      int len = snprintf(buffer,LEN+32,"%s: %s", name, message);
-      (void)send(fd, buffer, (size_t)len, 0);
+      //int len = snprintf(buffer,LEN,"%s", message);
+      int len = strlen(message);
+      (void)send(fd, message, (size_t)len, 0);
     }
     bzero(message,LEN);
-    bzero(buffer,LEN+32);
+    //bzero(buffer,LEN+32);
   }
   catch_ctrl_c_and_exit(2);
 }
 
 void recv_func() {
-  char message[LEN] = "";
+  char message[RECV_LEN] = "";
   //printf("Thread starting...\n");
   while (1) {
-    int receive = (int)recv(fd, message, LEN, 0);
+    int receive = (int)recv(fd, message, RECV_LEN, 0);
     if (receive > 0) {
       printf("%s\n", message);
       str_overwrite_stdout();
@@ -63,29 +64,24 @@ void recv_func() {
 }
 
 void handle_args(uint16_t *port, char **ip, int argc, char *argv[]){
-  if (argc == 3){
-    //Both IP and port given
-    if(strlen(argv[1]) <= 5) {
-      *port = (uint16_t)atoi(argv[1]);
-      *ip = argv[2];
-      return;
-    } else {
-      *port = (uint16_t)atoi(argv[2]);
-      *ip = argv[1];
-      return;
-    }
-  } else if (argc == 2) {
-    if (strlen(argv[1]) <= 5) {
-      *port = (uint16_t)atoi(argv[1]);
-      *ip = "127.0.0.1";
-      return;
-    } else if (strlen(argv[1]) >= 7){
-      *port = (uint16_t)8096;
-      *ip = argv[1];
-      return;
-    }
+  regex_t ip_regex, port_regex;
+  (void)regcomp(&ip_regex,
+        "^([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))."
+         "([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))."
+         "([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))."
+         "([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))$", REG_EXTENDED);
+  (void)regcomp(&port_regex,
+         "^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}"
+         "|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$",REG_EXTENDED);
+  int i;
+  for(i=1;i<argc;i++){
+    if(regexec(&ip_regex, argv[i], 0, NULL, 0) == 0)
+      (void)snprintf(*ip,16,"%s",argv[i]);
+    else if(regexec(&port_regex,argv[i], 0, NULL, 0) == 0)
+      *port = (uint16_t)atoi(argv[i]);
   }
-  //No args given
-  *port = (uint16_t)8096;
-  *ip = "127.0.0.1";
+  if(*port == 0)
+    *port = (uint16_t)8096;
+  if(strcmp(*ip,"")==0)
+    (void)snprintf(*ip,16,"127.0.0.1");
 }

@@ -1,11 +1,12 @@
 #include "server.h"
 
 int main(int argc, char *argv[]) {
-	char *ip = (argc >= 3)? argv[1] : "127.0.0.1";
-	uint16_t port = (argc >= 3)? (uint16_t)atoi(argv[2]) : (uint16_t)8096;
+	char *ip = "";
+	uint16_t port = 0;
 	handle_args(&port, &ip, argc, argv);
-	//printf("PORT: %d\n", port);
-	//printf("IP: %s\n", ip);
+	printf("PORT: %u\n", (unsigned int)port);
+	printf("IP: %s\n", ip);
+	printf("Use this to run client.\n");
 	int option = 1, listenfd = 1, connfd = 0;
 
 	struct sockaddr_in serv_addr;
@@ -38,13 +39,13 @@ int main(int argc, char *argv[]) {
 
 	printf("CHATROOM SERVER\n");
 
-	while (1) {
+	while (1==1) {
 		socklen_t clilen = (socklen_t)sizeof(cli_addr);
 		connfd = accept(listenfd, (struct sockaddr*)&cli_addr, &clilen);
 		if((cli_count + 1) == MAX_CLIENTS){
-			printf("Max clients reached. Rejected: ");
+			printf("Max clients reached. Rejected.\n");
 			//print_client_addr(cli_addr);
-			printf(":%d\n", cli_addr.sin_port);
+			//printf(":%d\n", cli_addr.sin_port);
 			(void)close(connfd);
 			continue;
 		}

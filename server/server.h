@@ -1,5 +1,4 @@
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,18 +6,19 @@
 #include <errno.h>
 #include <string.h>
 #include <pthread.h>
-#include <sys/types.h>
 #include <signal.h>
 #include <regex.h>
 
-#define MAX_CLIENTS 5
-#define LEN 2080
+#define MAX_CLIENTS 10
+#define LEN 2048
+#define NAME_LEN 32
+#define MSG_LEN 2096
 
 extern char *colours[7];
 enum COLOR{WHITE, PURPLE, YELLOW, GREEN, BLUE, RED, CYAN};
 
  static unsigned int cli_count = 0;
- static int uid = 10;
+ /*@unused@*/ static int uid = 10;
 
 typedef struct{
 	struct sockaddr_in address;
@@ -31,7 +31,7 @@ typedef struct{
 extern CLIENT *clients[MAX_CLIENTS];
 extern pthread_mutex_t clients_mutex;
 
-void str_overwrite_stdout();
+//void str_overwrite_stdout();
 
 void str_trim_lf (char* arr, size_t length);
 

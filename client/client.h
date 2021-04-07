@@ -3,13 +3,14 @@
 #include <string.h>
 #include <signal.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <regex.h>
 
 #define LEN 2048
+#define NAME_LEN 32
+#define RECV_LEN 2096
 
 extern volatile sig_atomic_t flag;
 extern struct sockaddr_in serv; //This is our main socket variable.

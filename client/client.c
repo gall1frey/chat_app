@@ -19,14 +19,15 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   //Set name
   printf("Please enter your name: ");
-  (void)fgets(name, 32, stdin);
+  (void)fgets(name, NAME_LEN-1, stdin);
+  (void)fflush(stdin);
   str_trim_lf(name, strlen(name));
   //Name validation
-  if (strlen(name) > 32 || strlen(name) < 2){
-		printf("Name must be less than 30 and more than 2 characters.\n");
+  if (strlen(name) > NAME_LEN-1 || strlen(name) < 2){
+		printf("Name must be less than 32 and more than 2 characters.\n");
 		return EXIT_FAILURE;
 	}
-  char buf[32] = "";
+  char buf[NAME_LEN+3] = "";
   int len = snprintf(buf,sizeof(buf),"NM>%s",name);
   //printf("[DEBUG]: Sending: %s\n",buf);
   (void)send(fd, buf, (size_t)len, 0);
@@ -52,8 +53,8 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 	}
 
-  while (1){
-    if(flag){
+  while (1==1){
+    if(flag == 1){
       printf("\nBye\n");
       break;
     }
