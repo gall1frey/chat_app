@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   (void)send(fd, buf, (size_t)len, 0);
   int receive = (int)recv(fd, buf, 3, 0);
   //printf("[DEBUG]: Received: %s\n",buf);
-  if (!(receive > 0 && !strcmp(buf,"OK"))) {
+  if (!(receive > 0 && strcmp(buf,"OK") == 0)) {
     printf("Name already exists in chatroom. Try again.\n");
     (void)close(fd);
     return EXIT_FAILURE;
