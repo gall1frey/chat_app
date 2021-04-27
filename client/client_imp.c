@@ -29,19 +29,18 @@ void catch_ctrl_c_and_exit( /*@unused@*/ int sig) {
 void send_func() {
   char message[LEN] = "";
 	//char buffer[LEN + 32] = "";
-  while(1) {
+  while(1==1) {
     str_overwrite_stdout();
-    (void)fgets(message, LEN, stdin);
+    if(fgets(message, LEN, stdin) == NULL)
+      catch_ctrl_c_and_exit(2);
     str_trim_lf(message,LEN);
-    if(!strcmp(message,"exit"))
+    if(strcmp(message,"exit") == 0)
       break;
     else{
-      //int len = snprintf(buffer,LEN,"%s", message);
-      int len = strlen(message);
+      int len = (int)strlen(message);
       (void)send(fd, message, (size_t)len, 0);
     }
     bzero(message,LEN);
-    //bzero(buffer,LEN+32);
   }
   catch_ctrl_c_and_exit(2);
 }

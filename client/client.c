@@ -1,11 +1,11 @@
 #include "client.h"
 
 int main(int argc, char *argv[]) {
-  char* IP = "";
+  char* IP = "127.0.0.1";
   uint16_t PORT = 8096;
   handle_args(&PORT, &IP, argc, argv);
-  //printf("PORT: %d\n", PORT);
-  //printf("IP: %s\n", IP);
+  printf("PORT: %u\n", (unsigned int)PORT);
+  printf("IP: %s\n", IP);
   (void)signal(SIGINT, catch_ctrl_c_and_exit);
 
   fd = socket(AF_INET, SOCK_STREAM, 0);

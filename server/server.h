@@ -31,8 +31,6 @@ typedef struct{
 extern CLIENT *clients[MAX_CLIENTS];
 extern pthread_mutex_t clients_mutex;
 
-//void str_overwrite_stdout();
-
 void str_trim_lf (char* arr, size_t length);
 
 void queue_add(CLIENT *cl);

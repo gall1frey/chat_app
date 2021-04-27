@@ -1,7 +1,7 @@
 #include "server.h"
 
 int main(int argc, char *argv[]) {
-	char *ip = "";
+	char *ip = "127.0.0.1";
 	uint16_t port = 0;
 	handle_args(&port, &ip, argc, argv);
 	printf("PORT: %u\n", (unsigned int)port);
